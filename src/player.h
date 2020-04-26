@@ -10,6 +10,9 @@ private:
     float jumpDuration;
     bool jumping;
     bool onFloor;
+    bool touchingLeft;
+    bool touchingRight;
+    bool touchingTop;
     uint8_t frame;
     const unsigned char *image;
 
@@ -26,7 +29,13 @@ public:
     bool isJumping();
     void toggleJumping();
     bool isOnFloor();
-    void toggleOnFloor();
+    void setOnFloor(bool onFloor);
+    bool isTouchingLeft();
+    void setTouchingLeft(bool touchingLeft);
+    bool isTouchingRight();
+    void setTouchingRight(bool touchingRight);
+    bool isTouchingTop();
+    void setTouchingTop(bool touchingTop);
     uint8_t getFrame();
     void setFrame(uint8_t frame);
     const unsigned char *getImage();

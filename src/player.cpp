@@ -12,6 +12,9 @@ Player::Player(uint8_t x, uint8_t y, int speedX, int speedY,
     this->image = image;
     this->jumping = false;
     this->onFloor = false;
+    this->touchingLeft = false;
+    this->touchingRight = false;
+    this->touchingTop = false;
     this->frame = 0;
 }
 
@@ -45,9 +48,39 @@ bool Player::isOnFloor()
     return this->onFloor;
 }
 
-void Player::toggleOnFloor()
+void Player::setOnFloor(bool onFloor)
 {
-    this->onFloor = !this->onFloor;
+    this->onFloor = onFloor;
+}
+
+bool Player::isTouchingLeft()
+{
+    return this->touchingLeft;
+}
+
+void Player::setTouchingLeft(bool touchingLeft)
+{
+    this->touchingLeft = touchingLeft;
+}
+
+bool Player::isTouchingRight()
+{
+    return this->touchingRight;
+}
+
+void Player::setTouchingRight(bool touchingRight)
+{
+    this->touchingRight = touchingRight;
+}
+
+bool Player::isTouchingTop()
+{
+    return this->touchingTop;
+}
+
+void Player::setTouchingTop(bool touchingTop)
+{
+    this->touchingTop = touchingTop;
 }
 
 uint8_t Player::getFrame()
@@ -73,5 +106,8 @@ void Player::reset(uint8_t x, uint8_t y, int speedX, int speedY)
     this->speedY = speedY;
     this->jumping = false;
     this->onFloor = false;
+    this->touchingLeft = false;
+    this->touchingRight = false;
+    this->touchingTop = false;
     this->frame = 0;
 }
