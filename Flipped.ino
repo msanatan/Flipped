@@ -13,20 +13,7 @@ const int FPS = 60;
 int gravity = 1;
 unsigned long playerJumpDuration = 0;
 
-Player player;
-
-void resetPlayer()
-{
-    player.x = 0;
-    player.y = HEIGHT - 24;
-    player.speedX = 1;
-    player.speedY = 1;
-    player.size = 8;
-    player.jumpDuration = 0.25;
-    player.jumping = false;
-    player.frame = 0;
-    player.image = playerSprite;
-}
+Player player = {0, HEIGHT - 24, 1, 1, 8, 0.25, playerSprite};
 
 void setup()
 {
@@ -34,9 +21,6 @@ void setup()
     arduboy.clear();
     arduboy.setFrameRate(FPS);
     arduboy.clear();
-
-    // Game init
-    resetPlayer();
 }
 
 void drawWorld(int level[][16], int width, int height, const unsigned char PROGMEM tile[], int tileSize)
@@ -61,7 +45,7 @@ void drawWorld(int level[][16], int width, int height, const unsigned char PROGM
 void movePlayer()
 {
     // Apply gravity
-    if (!player.jumping)
+    if (!player.isJumping())
     {
         player.y = player.y + gravity;
     }
@@ -74,9 +58,9 @@ void movePlayer()
         unsigned long deltaTime = currentTime - playerJumpDuration;
         float deltaSeconds = deltaTime * (1.0f / 1000.0f);
 
-        if (deltaSeconds >= player.jumpDuration)
+        if (deltaSeconds >= player.getJumpDuration())
         {
-            player.jumping = false;
+            player.toggleJumping();
             playerJumpDuration = 0;
         }
     }
@@ -85,7 +69,7 @@ void movePlayer()
     {
         player.x = player.x - player.speedX;
     }
-    else if (arduboy.pressed(RIGHT_BUTTON) && player.x + player.size < WIDTH)
+    else if (arduboy.pressed(RIGHT_BUTTON) && player.x + player.getSize() < WIDTH)
     {
         player.x = player.x + player.speedX;
     }
@@ -93,14 +77,15 @@ void movePlayer()
     if (arduboy.justPressed(B_BUTTON))
     {
         player.y = player.y - player.speedY;
-        player.jumping = true;
+        player.toggleJumping();
         playerJumpDuration = millis();
     }
 }
 
 void drawPlayer()
 {
-    Sprites::drawOverwrite(player.x, player.y, player.image, 0);
+    Sprites::drawOverwrite(player.x, player.y, player.getImage(),
+                           player.getFrame());
 }
 
 void loop()
@@ -113,11 +98,14 @@ void loop()
     arduboy.clear();
     arduboy.pollButtons();
 
-    // Draw tiles
-    drawWorld(level1, 16, 8, floorTile, 8);
     // Move player
     movePlayer();
+
+    // Draw tiles
+    drawWorld(level1, 16, 8, floorTile, 8);
+    // Draw player
     drawPlayer();
+
     // Render the state of the game scene
     arduboy.display();
 }
