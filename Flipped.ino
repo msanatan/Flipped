@@ -3,6 +3,7 @@
 // Flipped
 
 #include <Arduboy2.h>
+#include <math.h>
 #include "src/images.h"
 #include "src/levels.h"
 #include "src/player.h"
@@ -13,8 +14,8 @@ const int FPS = 60;
 const int TILE_SIZE = 8;
 int gravity = 1;
 unsigned long playerJumpDuration = 0;
-
 Player player = {0, HEIGHT - 24, 1, 1, 8, 0.25, playerSprite};
+Rect tileRect; // Used for collision checking
 
 void setup()
 {
@@ -22,6 +23,7 @@ void setup()
     arduboy.clear();
     arduboy.setFrameRate(FPS);
     arduboy.clear();
+    Serial.begin(9600);
 }
 
 void drawWorld(int level[][16], int width, int height, const unsigned char PROGMEM tile[], int tileSize)
@@ -43,62 +45,62 @@ void drawWorld(int level[][16], int width, int height, const unsigned char PROGM
     }
 }
 
-bool isValidTile(int x, int y)
+void checkCollision(int level[][16], int width, int height)
 {
-    return level1[y][x];
-}
+    // Reset collision flags
+    player.setOnFloor(false);
+    player.setTouchingTop(false);
+    player.setTouchingRight(false);
+    player.setTouchingLeft(false);
 
-void checkCollision(int worldEndX, int worldEndY)
-{
-    int leftXTileLocation = player.x / TILE_SIZE;                        // 120 - 15
-    int rightXTileLocation = (player.x + player.getSize()) / TILE_SIZE;  // 128 - 16
-    int topYTileLocation = player.y / TILE_SIZE;                         // 40 - 5
-    int bottomYTileLocation = (player.y + player.getSize()) / TILE_SIZE; // 48 - 6
-
-    // Check if player is touching ground
-    if (bottomYTileLocation < worldEndY &&
-        (isValidTile(leftXTileLocation, bottomYTileLocation) ||
-         isValidTile(rightXTileLocation, bottomYTileLocation)))
-    {
-        player.setOnFloor(true);
-    }
-    else
-    {
-        player.setOnFloor(false);
-    }
-
-    // Check if player is touching the top
-    if (isValidTile(leftXTileLocation, topYTileLocation) ||
-        isValidTile(rightXTileLocation, topYTileLocation))
-    {
-        player.setTouchingTop(true);
-    }
-    else
-    {
-        player.setTouchingTop(false);
-    }
-
-    // Check if player is touching on its right
-    if (rightXTileLocation < worldEndX &&
-        (isValidTile(rightXTileLocation, topYTileLocation) ||
-        isValidTile(rightXTileLocation, bottomYTileLocation)))
-    {
-        player.setTouchingRight(true);
-    }
-    else
-    {
-        player.setTouchingRight(false);
-    }
-
-    // Check if player is touching on its left
-    if (isValidTile(leftXTileLocation, topYTileLocation) ||
-        isValidTile(leftXTileLocation, bottomYTileLocation))
+    // Check if out of horizontal scope
+    if (player.x <= 0)
     {
         player.setTouchingLeft(true);
     }
-    else
+
+    if (player.x + player.getSize() >= width * 8)
     {
-        player.setTouchingLeft(false);
+        player.setTouchingRight(true);
+    }
+
+    // We don't want to check every object, just those around us
+    int playerXTile = player.x / TILE_SIZE;
+    int leftX = max(playerXTile - 1, 0);
+    int rightX = min(playerXTile + 1, width - 1);
+
+    int playerYTile = player.y / TILE_SIZE;
+    int topY = max(playerYTile - 1, 0);
+    int bottomY = min(playerYTile + 1, height - 1);
+    int leftTileX = leftX * TILE_SIZE;
+    int rightTileX = rightX * TILE_SIZE;
+    int topTileY = topY * TILE_SIZE;
+    int bottomTileY = bottomY * TILE_SIZE;
+
+    // Check if touching ground
+    if (level[bottomY][playerXTile] ||
+        (level[bottomY][rightX] &&
+         player.x + player.getSize() > rightTileX))
+    {
+        player.setOnFloor(true);
+    }
+    else if (player.y == topTileY + TILE_SIZE &&
+             (level[topY][playerXTile] ||
+              (level[topY][rightX] &&
+               player.x + player.getSize() > rightTileX)))
+    {
+        player.setTouchingTop(true);
+    }
+
+    // Check if touching right
+    if (level[playerYTile][rightX])
+    {
+        player.setTouchingRight(true);
+    }
+    else if (level[playerYTile][leftX] && // and check left
+             player.x == leftTileX + TILE_SIZE)
+    {
+        player.setTouchingLeft(true);
     }
 }
 
@@ -161,7 +163,7 @@ void loop()
     arduboy.pollButtons();
 
     // Check collision and gravity
-    checkCollision(16, 8);
+    checkCollision(level1, 16, 8);
     applyGravity();
     // Move player
     movePlayer();
