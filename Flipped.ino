@@ -77,28 +77,105 @@ void checkCollision(int level[][16], int width, int height)
     int topTileY = topY * TILE_SIZE;
     int bottomTileY = bottomY * TILE_SIZE;
 
-    // Check if touching ground
-    if (level[bottomY][playerXTile] ||
-        (level[bottomY][rightX] &&
-         player.x + player.getSize() > rightTileX))
+    /*
+    There are 3 scenarios when a platform is below the player
+            - - -
+            - P -
+            - 1 -
+
+            - - -
+            -P  -
+            1 - -
+    */
+    if (level[bottomY][playerXTile])
     {
         player.setOnFloor(true);
     }
-    else if (player.y == topTileY + TILE_SIZE &&
-             (level[topY][playerXTile] ||
-              (level[topY][rightX] &&
-               player.x + player.getSize() > rightTileX)))
+    /*
+            - - -
+            -  P-
+            - - 1
+    */
+    else if (level[bottomY][rightX] &&
+             player.x + player.getSize() > rightTileX)
+    {
+        player.setOnFloor(true);
+    }
+
+    /*
+    There are 3 scenarios when a platform is above the player
+            - 1 -
+            - P -
+            - - -
+
+            1 - -
+            -P  -
+            - - -
+    */
+    if (level[topY][playerXTile] &&
+        player.y == topTileY + TILE_SIZE)
+    {
+        player.setTouchingTop(true);
+    }
+    /*
+            - - 1
+            -  P-
+            - - -
+    */
+    else if (level[topY][rightX] &&
+             player.x + player.getSize() > rightTileX)
     {
         player.setTouchingTop(true);
     }
 
-    // Check if touching right
+    /*
+    There are 3 scenarios when a platform is on the right of a player
+            - - -
+            - P 1
+            - - -
+
+            - - 1
+            - P -   (P is heading upwards)
+            - - -
+    */
     if (level[playerYTile][rightX])
     {
         player.setTouchingRight(true);
     }
-    else if (level[playerYTile][leftX] && // and check left
-             player.x == leftTileX + TILE_SIZE)
+    /*
+            - - -
+            - P -   (P is heading downwards)
+            - - 1
+    */
+    else if (level[bottomY][rightX] &&
+             player.y + player.getSize() > bottomTileY)
+    {
+        player.setTouchingRight(true);
+    }
+
+    /*
+    There are 3 scenarios when a platform is on the left of a player
+            - - -
+            1 P -
+            - - -
+
+            1 - -
+            - P -   (P is heading upwards)
+            - - -
+    */
+    if (level[playerYTile][leftX] &&
+        player.x == leftTileX + TILE_SIZE)
+    {
+        player.setTouchingLeft(true);
+    }
+    /*
+            - - -
+            - P -   (P is heading downwards)
+            1 - -
+    */
+    else if (level[bottomY][leftX] &&
+             player.x == leftTileX + TILE_SIZE &&
+             player.y + player.getSize() > bottomTileY)
     {
         player.setTouchingLeft(true);
     }
