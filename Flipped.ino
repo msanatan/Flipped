@@ -123,6 +123,7 @@ void checkCollision(int level[][16], int width, int height)
             - - -
     */
     else if (level[topY][rightX] &&
+             player.y == topTileY + TILE_SIZE &&
              player.x + player.getSize() > rightTileX)
     {
         player.setTouchingTop(true);
