@@ -64,138 +64,62 @@ void checkCollision(int level[][16], int width, int height)
         player.setTouchingRight(true);
     }
 
-    // We don't want to check every object, just those around us
-    int playerXTile = player.x / TILE_SIZE;
-    int leftX = max(playerXTile - 1, 0);
-    int rightX = min(playerXTile + 1, width - 1);
+    // Get the "end" points of contact
+    int playerEndY = player.y + player.getSize();
+    int playerEndX = player.x + player.getSize();
 
-    int playerYTile = player.y / TILE_SIZE;
-    int topY = max(playerYTile - 1, 0);
-    int bottomY = min(playerYTile + 1, height - 1);
+    // The tile the player resides
+    int playerTileY = player.y / TILE_SIZE;
+    int playerTileX = player.x / TILE_SIZE;
 
-    int leftTileX = leftX * TILE_SIZE;
-    int rightTileX = rightX * TILE_SIZE;
-    int topTileY = topY * TILE_SIZE;
-    int bottomTileY = bottomY * TILE_SIZE;
+    // Details of the surrounding tiles
+    int bottomY = min(playerEndY / TILE_SIZE, height - 1);
+    int rightX = min(playerEndX / TILE_SIZE, width - 1);
+    int topY = max(playerTileY - 1, 0);
+    int leftX = max(playerTileX - 1, 0);
 
-    /*
-    There are 3 scenarios when a platform is below the player
-            - - -
-            - P -
-            - 1 -
+    /* Bottom collision: the player's end is at the beginning of the tile and
+    either there's a tile right below us or we're partially on a tile to the
+    bottom right
     */
-    if (level[bottomY][playerXTile] &&
-        player.y + player.getSize() == bottomTileY)
-    {
-        player.setOnFloor(true);
-    }
-    /*
-            - - -
-            -  P-
-            - - 1
-    */
-    else if (level[bottomY][rightX] &&
-             player.y + player.getSize() == bottomTileY &&
-             player.x + player.getSize() > rightTileX)
-    {
-        player.setOnFloor(true);
-    }
-    /*
-            - - -
-            -P  -
-            1 - -
-    */
-    else if (level[bottomY][leftX] &&
-             player.y + player.getSize() == bottomTileY &&
-             player.x == leftTileX + TILE_SIZE)
+    if (playerEndY == (bottomY * TILE_SIZE) &&
+        (level[bottomY][playerTileX] ||
+         (level[bottomY][rightX] && playerEndX > rightX * TILE_SIZE)))
     {
         player.setOnFloor(true);
     }
 
-    /*
-    There are 3 scenarios when a platform is above the player
-            - 1 -
-            - P -
-            - - -
+    /* Top collision: the player's y value is at the end of the top tile and
+    either the tile is right above us or we're partially hitting a tile to the
+    top right
     */
-    if (level[topY][playerXTile] &&
-        player.y == topTileY + TILE_SIZE)
-    {
-        player.setTouchingTop(true);
-    }
-    /*
-            - - 1
-            -  P-
-            - - -
-    */
-    else if (level[topY][rightX] &&
-             player.y == topTileY + TILE_SIZE &&
-             player.x + player.getSize() > rightTileX)
-    {
-        player.setTouchingTop(true);
-    }
-    /*
-            1 - -
-            -P  -
-            - - -
-    */
-    else if (level[topY][leftX] &&
-             player.y == topTileY + TILE_SIZE &&
-             player.x == leftTileX + TILE_SIZE)
+    if (player.y == (topY * TILE_SIZE) + TILE_SIZE &&
+        (level[topY][playerTileX] ||
+         (level[topY][rightX] && playerEndX > rightX * TILE_SIZE)))
     {
         player.setTouchingTop(true);
     }
 
-    /*
-    There are 3 scenarios when a platform is on the right of a player
-            - - -
-            - P 1
-            - - -
-
-            - - 1
-            - P -   (P is heading upwards)
-            - - -
+    /* Left collision: the player's x value is at the end of the left tile and
+    either the tile is immediately on our left or we're partially hitting a tile
+    to the bottom left
     */
-    if (level[playerYTile][rightX])
-    {
-        player.setTouchingRight(true);
-    }
-    /*
-            - - -
-            - P -   (P is heading downwards)
-            - - 1
-    */
-    else if (level[bottomY][rightX] &&
-             player.y + player.getSize() > bottomTileY)
-    {
-        player.setTouchingRight(true);
-    }
-
-    /*
-    There are 3 scenarios when a platform is on the left of a player
-            - - -
-            1 P -
-            - - -
-
-            1 - -
-            - P -   (P is heading upwards)
-            - - -
-    */
-    if (level[playerYTile][leftX] &&
-        player.x == leftTileX + TILE_SIZE)
+    if (player.x == (leftX * TILE_SIZE) + TILE_SIZE &&
+        (level[playerTileY][leftX] ||
+         (level[bottomY][leftX] && !player.isOnFloor())))
     {
         player.setTouchingLeft(true);
     }
-    /*
-            - - -
-            - P -   (P is heading downwards)
-            1 - -
+
+    /* Right collision: the player's end is at the beginning of the right tile
+    and either the tile is immediately on our right or we're partially hitting a
+    tile to the bottom right
     */
-    else if (level[bottomY][leftX] &&
-             player.x == leftTileX + TILE_SIZE &&
-             player.y + player.getSize() > bottomTileY)
+    if (playerEndX == rightX * TILE_SIZE &&
+        (level[playerTileY][rightX] ||
+         (level[bottomY][rightX] && !player.isOnFloor())))
     {
-        player.setTouchingLeft(true);
+        player.setTouchingRight(true);
     }
 }
 
