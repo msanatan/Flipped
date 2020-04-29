@@ -72,6 +72,7 @@ void checkCollision(int level[][16], int width, int height)
     int playerYTile = player.y / TILE_SIZE;
     int topY = max(playerYTile - 1, 0);
     int bottomY = min(playerYTile + 1, height - 1);
+    
     int leftTileX = leftX * TILE_SIZE;
     int rightTileX = rightX * TILE_SIZE;
     int topTileY = topY * TILE_SIZE;
@@ -139,7 +140,8 @@ void checkCollision(int level[][16], int width, int height)
             - P -   (P is heading upwards)
             - - -
     */
-    if (level[playerYTile][rightX])
+    if (level[playerYTile][rightX] &&
+        player.x + player.getSize() == rightTileX)
     {
         player.setTouchingRight(true);
     }
@@ -149,6 +151,7 @@ void checkCollision(int level[][16], int width, int height)
             - - 1
     */
     else if (level[bottomY][rightX] &&
+             player.x + player.getSize() == rightTileX &&
              player.y + player.getSize() > bottomTileY)
     {
         player.setTouchingRight(true);
