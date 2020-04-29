@@ -72,7 +72,7 @@ void checkCollision(int level[][16], int width, int height)
     int playerYTile = player.y / TILE_SIZE;
     int topY = max(playerYTile - 1, 0);
     int bottomY = min(playerYTile + 1, height - 1);
-    
+
     int leftTileX = leftX * TILE_SIZE;
     int rightTileX = rightX * TILE_SIZE;
     int topTileY = topY * TILE_SIZE;
@@ -83,12 +83,9 @@ void checkCollision(int level[][16], int width, int height)
             - - -
             - P -
             - 1 -
-
-            - - -
-            -P  -
-            1 - -
     */
-    if (level[bottomY][playerXTile])
+    if (level[bottomY][playerXTile] &&
+        player.y + player.getSize() == bottomTileY)
     {
         player.setOnFloor(true);
     }
@@ -98,7 +95,19 @@ void checkCollision(int level[][16], int width, int height)
             - - 1
     */
     else if (level[bottomY][rightX] &&
+             player.y + player.getSize() == bottomTileY &&
              player.x + player.getSize() > rightTileX)
+    {
+        player.setOnFloor(true);
+    }
+    /*
+            - - -
+            -P  -
+            1 - -
+    */
+    else if (level[bottomY][leftX] &&
+             player.y + player.getSize() == bottomTileY &&
+             player.x == leftTileX + TILE_SIZE)
     {
         player.setOnFloor(true);
     }
@@ -107,10 +116,6 @@ void checkCollision(int level[][16], int width, int height)
     There are 3 scenarios when a platform is above the player
             - 1 -
             - P -
-            - - -
-
-            1 - -
-            -P  -
             - - -
     */
     if (level[topY][playerXTile] &&
@@ -129,6 +134,17 @@ void checkCollision(int level[][16], int width, int height)
     {
         player.setTouchingTop(true);
     }
+    /*
+            1 - -
+            -P  -
+            - - -
+    */
+    else if (level[topY][leftX] &&
+             player.y == topTileY + TILE_SIZE &&
+             player.x == leftTileX + TILE_SIZE)
+    {
+        player.setTouchingTop(true);
+    }
 
     /*
     There are 3 scenarios when a platform is on the right of a player
@@ -140,8 +156,7 @@ void checkCollision(int level[][16], int width, int height)
             - P -   (P is heading upwards)
             - - -
     */
-    if (level[playerYTile][rightX] &&
-        player.x + player.getSize() == rightTileX)
+    if (level[playerYTile][rightX])
     {
         player.setTouchingRight(true);
     }
@@ -151,7 +166,6 @@ void checkCollision(int level[][16], int width, int height)
             - - 1
     */
     else if (level[bottomY][rightX] &&
-             player.x + player.getSize() == rightTileX &&
              player.y + player.getSize() > bottomTileY)
     {
         player.setTouchingRight(true);
