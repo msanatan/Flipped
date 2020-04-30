@@ -86,7 +86,14 @@ void checkCollision(int level[][16], int width, int height)
         (level[bottomY][playerTileX] ||
          (level[bottomY][rightX] && playerEndX > rightX * TILE_SIZE)))
     {
-        player.setOnFloor(true);
+        if (player.isFlipped())
+        {
+            player.setTouchingTop(true);
+        }
+        else
+        {
+            player.setOnFloor(true);
+        }
     }
 
     /* Top collision: the player's y value is at the end of the top tile and
@@ -97,7 +104,14 @@ void checkCollision(int level[][16], int width, int height)
         (level[topY][playerTileX] ||
          (level[topY][rightX] && playerEndX > rightX * TILE_SIZE)))
     {
-        player.setTouchingTop(true);
+        if (player.isFlipped())
+        {
+            player.setOnFloor(true);
+        }
+        else
+        {
+            player.setTouchingTop(true);
+        }
     }
 
     /* Left collision: the player's x value is at the end of the left tile and
@@ -162,6 +176,12 @@ void movePlayer()
         player.y = player.y - player.speedY;
         player.toggleJumping();
         playerJumpDuration = millis();
+    }
+
+    if (arduboy.justPressed(A_BUTTON))
+    {
+        gravity = -gravity;
+        player.toggleFlipped();
     }
 }
 
