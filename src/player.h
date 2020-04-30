@@ -15,6 +15,7 @@ private:
     bool touchingTop;
     uint8_t frame;
     const unsigned char *image;
+    bool flipped;
 
 public:
     uint8_t x;
@@ -36,6 +37,8 @@ public:
     void setTouchingRight(bool touchingRight);
     bool isTouchingTop();
     void setTouchingTop(bool touchingTop);
+    bool isFlipped();
+    void toggleFlipped();
     uint8_t getFrame();
     void setFrame(uint8_t frame);
     const unsigned char *getImage();

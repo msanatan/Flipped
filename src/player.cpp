@@ -83,6 +83,17 @@ void Player::setTouchingTop(bool touchingTop)
     this->touchingTop = touchingTop;
 }
 
+bool Player::isFlipped()
+{
+    return this->flipped;
+}
+
+void Player::toggleFlipped()
+{
+    this->flipped = !flipped;
+    this->speedY = -this->speedY;
+}
+
 uint8_t Player::getFrame()
 {
     return this->frame;
