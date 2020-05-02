@@ -6,7 +6,8 @@
 #include <math.h>
 
 #include "src/images.h"
-#include "src/levels.h"
+#include "src/level.h"
+#include "src/maps.h"
 #include "src/player.h"
 Arduboy2 arduboy;
 
@@ -16,7 +17,7 @@ const int TILE_SIZE = 8;
 int gravity = 1;
 unsigned long playerJumpDuration = 0;
 Player player = {0, HEIGHT - 24, 1, 1, 8, 0.25, playerSprite};
-Rect tileRect;  // Used for collision checking
+Level level1 = Level{map1, 16, 8, 0, 5};
 
 void setup() {
   arduboy.begin();
@@ -26,13 +27,12 @@ void setup() {
   Serial.begin(9600);
 }
 
-void drawWorld(int level[][16], int width, int height,
-               const unsigned char PROGMEM tile[], int tileSize) {
+void drawWorld(Level level, const unsigned char tile[], int tileSize) {
   int positionY = 0;
-  for (int y = 0; y < height; y++) {
+  for (int y = 0; y < level.getHeight(); y++) {
     int positionX = 0;
-    for (int x = 0; x < width; x++) {
-      if (level[y][x] > 0) {
+    for (int x = 0; x < level.getWidth(); x++) {
+      if (level.map[y][x] > 0) {
         Sprites::drawOverwrite(positionX, positionY, tile, 0);
       }
       positionX = positionX + tileSize;
@@ -42,7 +42,7 @@ void drawWorld(int level[][16], int width, int height,
   }
 }
 
-void checkCollision(int level[][16], int width, int height) {
+void checkCollision(Level level) {
   // Reset collision flags
   player.setOnFloor(false);
   player.setTouchingTop(false);
@@ -54,7 +54,7 @@ void checkCollision(int level[][16], int width, int height) {
     player.setTouchingLeft(true);
   }
 
-  if (player.x + player.getSize() >= width * 8) {
+  if (player.x + player.getSize() >= level.getWidth() * 8) {
     player.setTouchingRight(true);
   }
 
@@ -67,8 +67,8 @@ void checkCollision(int level[][16], int width, int height) {
   int playerTileX = player.x / TILE_SIZE;
 
   // Details of the surrounding tiles
-  int bottomY = min(playerEndY / TILE_SIZE, height - 1);
-  int rightX = min(playerEndX / TILE_SIZE, width - 1);
+  int bottomY = min(playerEndY / TILE_SIZE, level.getHeight() - 1);
+  int rightX = min(playerEndX / TILE_SIZE, level.getWidth() - 1);
   int topY = max(playerTileY - 1, 0);
   int leftX = max(playerTileX - 1, 0);
 
@@ -77,8 +77,8 @@ void checkCollision(int level[][16], int width, int height) {
   bottom right
   */
   if (playerEndY == (bottomY * TILE_SIZE) &&
-      (level[bottomY][playerTileX] ||
-       (level[bottomY][rightX] && playerEndX > rightX * TILE_SIZE))) {
+      (level.map[bottomY][playerTileX] ||
+       (level.map[bottomY][rightX] && playerEndX > rightX * TILE_SIZE))) {
     if (player.isFlipped()) {
       player.setTouchingTop(true);
     } else {
@@ -91,8 +91,8 @@ void checkCollision(int level[][16], int width, int height) {
   top right
   */
   if (player.y == (topY * TILE_SIZE) + TILE_SIZE &&
-      (level[topY][playerTileX] ||
-       (level[topY][rightX] && playerEndX > rightX * TILE_SIZE))) {
+      (level.map[topY][playerTileX] ||
+       (level.map[topY][rightX] && playerEndX > rightX * TILE_SIZE))) {
     if (player.isFlipped()) {
       player.setOnFloor(true);
     } else {
@@ -105,8 +105,8 @@ void checkCollision(int level[][16], int width, int height) {
   to the bottom left
   */
   if (player.x == (leftX * TILE_SIZE) + TILE_SIZE &&
-      (level[playerTileY][leftX] ||
-       (level[bottomY][leftX] && !player.isOnFloor()))) {
+      (level.map[playerTileY][leftX] ||
+       (level.map[bottomY][leftX] && !player.isOnFloor()))) {
     player.setTouchingLeft(true);
   }
 
@@ -115,8 +115,8 @@ void checkCollision(int level[][16], int width, int height) {
   tile to the bottom right
   */
   if (playerEndX == rightX * TILE_SIZE &&
-      (level[playerTileY][rightX] ||
-       (level[bottomY][rightX] && !player.isOnFloor()))) {
+      (level.map[playerTileY][rightX] ||
+       (level.map[bottomY][rightX] && !player.isOnFloor()))) {
     player.setTouchingRight(true);
   }
 }
@@ -173,13 +173,13 @@ void loop() {
   arduboy.pollButtons();
 
   // Check collision and gravity
-  checkCollision(level1, 16, 8);
+  checkCollision(level1);
   applyGravity();
   // Move player
   movePlayer();
 
   // Draw tiles
-  drawWorld(level1, 16, 8, floorTile, TILE_SIZE);
+  drawWorld(level1, floorTile, TILE_SIZE);
   // Draw player
   drawPlayer();
 
