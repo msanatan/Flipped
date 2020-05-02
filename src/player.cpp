@@ -6,6 +6,7 @@ Player::Player(uint8_t x, uint8_t y, int speedX, int speedY, uint8_t size,
   this->y = y;
   this->speedX = speedX;
   this->speedY = speedY;
+  this->originalSpeedY = speedY;
   this->size = size;
   this->jumpDuration = jumpDuration;
   this->image = image;
@@ -67,6 +68,7 @@ const unsigned char *Player::getImage() { return this->image; }
 void Player::reset(Point position) {
   this->x = position.x;
   this->y = position.y;
+  this->speedY = this->originalSpeedY;
   this->jumping = false;
   this->onFloor = true;
   this->touchingLeft = false;

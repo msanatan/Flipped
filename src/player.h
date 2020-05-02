@@ -15,6 +15,7 @@ class Player {
   uint8_t frame;
   const unsigned char *image;
   bool flipped;
+  int originalSpeedY;
 
  public:
   uint8_t x;
