@@ -1,124 +1,78 @@
 #include "player.h"
 
-Player::Player(uint8_t x, uint8_t y, int speedX, int speedY,
-               uint8_t size, float jumpDuration, const unsigned char *image)
-{
-    this->x = x;
-    this->y = y;
-    this->speedX = speedX;
-    this->speedY = speedY;
-    this->size = size;
-    this->jumpDuration = jumpDuration;
-    this->image = image;
-    this->jumping = false;
-    this->onFloor = false;
-    this->touchingLeft = false;
-    this->touchingRight = false;
-    this->touchingTop = false;
-    this->frame = 0;
+Player::Player(uint8_t x, uint8_t y, int speedX, int speedY, uint8_t size,
+               float jumpDuration, const unsigned char *image) {
+  this->x = x;
+  this->y = y;
+  this->speedX = speedX;
+  this->speedY = speedY;
+  this->size = size;
+  this->jumpDuration = jumpDuration;
+  this->image = image;
+  this->jumping = false;
+  this->onFloor = false;
+  this->touchingLeft = false;
+  this->touchingRight = false;
+  this->touchingTop = false;
+  this->frame = 0;
 }
 
-uint8_t Player::getSize()
-{
-    return this->size;
+uint8_t Player::getSize() { return this->size; }
+
+float Player::getJumpDuration() { return this->jumpDuration; }
+
+Rect Player::getRect() {
+  return Rect{this->x, this->y, this->size, this->size};
 }
 
-float Player::getJumpDuration()
-{
-    return this->jumpDuration;
+bool Player::isJumping() { return this->jumping; }
+
+void Player::toggleJumping() { this->jumping = !this->jumping; }
+
+bool Player::isOnFloor() { return this->onFloor; }
+
+void Player::setOnFloor(bool onFloor) { this->onFloor = onFloor; }
+
+bool Player::isTouchingLeft() { return this->touchingLeft; }
+
+void Player::setTouchingLeft(bool touchingLeft) {
+  this->touchingLeft = touchingLeft;
 }
 
-Rect Player::getRect()
-{
-    return Rect{this->x, this->y, this->size, this->size};
+bool Player::isTouchingRight() { return this->touchingRight; }
+
+void Player::setTouchingRight(bool touchingRight) {
+  this->touchingRight = touchingRight;
 }
 
-bool Player::isJumping()
-{
-    return this->jumping;
+bool Player::isTouchingTop() { return this->touchingTop; }
+
+void Player::setTouchingTop(bool touchingTop) {
+  this->touchingTop = touchingTop;
 }
 
-void Player::toggleJumping()
-{
-    this->jumping = !this->jumping;
+bool Player::isFlipped() { return this->flipped; }
+
+void Player::toggleFlipped() {
+  this->flipped = !flipped;
+  this->speedY = -this->speedY;
 }
 
-bool Player::isOnFloor()
-{
-    return this->onFloor;
-}
+uint8_t Player::getFrame() { return this->frame; }
 
-void Player::setOnFloor(bool onFloor)
-{
-    this->onFloor = onFloor;
-}
+void Player::setFrame(uint8_t frame) { this->frame = frame; }
 
-bool Player::isTouchingLeft()
-{
-    return this->touchingLeft;
-}
+const unsigned char *Player::getImage() { return this->image; }
 
-void Player::setTouchingLeft(bool touchingLeft)
-{
-    this->touchingLeft = touchingLeft;
-}
-
-bool Player::isTouchingRight()
-{
-    return this->touchingRight;
-}
-
-void Player::setTouchingRight(bool touchingRight)
-{
-    this->touchingRight = touchingRight;
-}
-
-bool Player::isTouchingTop()
-{
-    return this->touchingTop;
-}
-
-void Player::setTouchingTop(bool touchingTop)
-{
-    this->touchingTop = touchingTop;
-}
-
-bool Player::isFlipped()
-{
-    return this->flipped;
-}
-
-void Player::toggleFlipped()
-{
-    this->flipped = !flipped;
-    this->speedY = -this->speedY;
-}
-
-uint8_t Player::getFrame()
-{
-    return this->frame;
-}
-
-void Player::setFrame(uint8_t frame)
-{
-    this->frame = frame;
-}
-
-const unsigned char *Player::getImage()
-{
-    return this->image;
-}
-
-void Player::reset(uint8_t x, uint8_t y, int speedX, int speedY)
-{
-    this->x = x;
-    this->y = y;
-    this->speedX = speedX;
-    this->speedY = speedY;
-    this->jumping = false;
-    this->onFloor = false;
-    this->touchingLeft = false;
-    this->touchingRight = false;
-    this->touchingTop = false;
-    this->frame = 0;
+void Player::reset(uint8_t x, uint8_t y, int speedX, int speedY) {
+  this->x = x;
+  this->y = y;
+  this->speedX = speedX;
+  this->speedY = speedY;
+  this->jumping = false;
+  this->onFloor = false;
+  this->touchingLeft = false;
+  this->touchingRight = false;
+  this->touchingTop = false;
+  this->frame = 0;
 }
