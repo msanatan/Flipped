@@ -64,15 +64,14 @@ void Player::setFrame(uint8_t frame) { this->frame = frame; }
 
 const unsigned char *Player::getImage() { return this->image; }
 
-void Player::reset(uint8_t x, uint8_t y, int speedX, int speedY) {
-  this->x = x;
-  this->y = y;
-  this->speedX = speedX;
-  this->speedY = speedY;
+void Player::reset(Point position) {
+  this->x = position.x;
+  this->y = position.y;
   this->jumping = false;
-  this->onFloor = false;
+  this->onFloor = true;
   this->touchingLeft = false;
   this->touchingRight = false;
   this->touchingTop = false;
+  this->flipped = false;
   this->frame = 0;
 }

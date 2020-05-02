@@ -41,7 +41,7 @@ class Player {
   uint8_t getFrame();
   void setFrame(uint8_t frame);
   const unsigned char *getImage();
-  void reset(uint8_t x, uint8_t y, int speedX, int speedY);
+  void reset(Point position);
   void draw();
 };
 
