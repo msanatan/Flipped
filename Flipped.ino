@@ -162,7 +162,7 @@ void movePlayer() {
     playerJumpDuration = millis();
   }
 
-  if (arduboy.justPressed(A_BUTTON)) {
+  if (arduboy.justPressed(A_BUTTON) && player.isOnFloor()) {
     gravity = -gravity;
     player.toggleFlipped();
   }
