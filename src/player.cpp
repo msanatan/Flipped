@@ -1,6 +1,6 @@
 #include "player.h"
 
-Player::Player(uint8_t x, uint8_t y, int speedX, int speedY, uint8_t size,
+Player::Player(int x, int y, int speedX, int speedY, uint8_t size,
                float jumpDuration, const unsigned char *image) {
   this->x = x;
   this->y = y;

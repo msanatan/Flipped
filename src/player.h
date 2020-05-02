@@ -18,11 +18,11 @@ class Player {
   int originalSpeedY;
 
  public:
-  uint8_t x;
-  uint8_t y;
+  int x;
+  int y;
   int speedX;
   int speedY;
-  Player(uint8_t x, uint8_t y, int speedX, int speedY, uint8_t size,
+  Player(int x, int y, int speedX, int speedY, uint8_t size,
          float jumpDuration, const unsigned char *image);
   uint8_t getSize();
   float getJumpDuration();
