@@ -49,6 +49,10 @@ void checkCollision(Level level) {
   player.setTouchingRight(false);
   player.setTouchingLeft(false);
 
+  // Get the "end" points of contact
+  int playerEndY = player.y + player.getSize();
+  int playerEndX = player.x + player.getSize();
+
   // Check if out of horizontal scope
   if (player.x <= 0) {
     player.setTouchingLeft(true);
@@ -58,9 +62,14 @@ void checkCollision(Level level) {
     player.setTouchingRight(true);
   }
 
-  // Get the "end" points of contact
-  int playerEndY = player.y + player.getSize();
-  int playerEndX = player.x + player.getSize();
+  // Check if out of vertical scope i.e. dead
+  if (playerEndY <= 0 || player.y > level.getHeight() * 8) {
+    if (player.isFlipped()) {
+      gravity = -gravity;
+    }
+    player.reset(level.getStartingPoint());
+    return;
+  }
 
   // The tile the player resides
   int playerTileY = player.y / TILE_SIZE;
