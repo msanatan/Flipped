@@ -16,8 +16,8 @@ const int FPS = 60;
 const int TILE_SIZE = 8;
 int gravity = 1;
 unsigned long playerJumpDuration = 0;
-Player player = {0, HEIGHT - 24, 1, 1, 8, 0.25, playerSprite};
-Level level1 = Level{map1, 16, 8, 0, 5, 15, 6, flagSprite};
+Player player = {0, HEIGHT - 16, 1, 1, 8, 0.25, playerSprite};
+Level level1 = Level{map1, 16, 8, 0, 6, 15, 6, flagSprite};
 
 void setup() {
   arduboy.begin();
