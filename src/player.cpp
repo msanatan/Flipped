@@ -67,14 +67,14 @@ void Player::nextFrame() {
   // First check if flipped or not
   if (this->flipped) {
     if (this->direction == RIGHT) {
-      if (this->frame >= 11 || this->jumping || !this->moving) {
+      if (this->frame >= 11 || !this->onFloor || !this->moving) {
         this->frame = 8;
       } else {
         this->frame++;
       }
     } else if (this->direction == LEFT) {
       // We're facing the left
-      if (this->frame == 15 || this->jumping || !this->moving) {
+      if (this->frame == 15 || !this->onFloor || !this->moving) {
         this->frame = 12;
       } else {
         this->frame++;
@@ -84,14 +84,14 @@ void Player::nextFrame() {
     // For when we're on the ground
     // First check if we're facing the right
     if (this->direction == RIGHT) {
-      if (this->frame >= 3 || this->jumping || !this->moving) {
+      if (this->frame >= 3 || !this->onFloor || !this->moving) {
         this->frame = 0;
       } else {
         this->frame++;
       }
     } else if (this->direction == LEFT) {
       // We're facing the left
-      if (this->frame == 7 || this->jumping || !this->moving) {
+      if (this->frame == 7 || !this->onFloor || !this->moving) {
         this->frame = 4;
       } else {
         this->frame++;
