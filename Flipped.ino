@@ -17,7 +17,7 @@ const int TILE_SIZE = 8;
 int gravity = 1;
 unsigned long playerJumpDuration = 0;
 Player player = {0, HEIGHT - 24, 1, 1, 8, 0.25, playerSprite};
-Level level1 = Level{map1, 16, 8, 0, 5};
+Level level1 = Level{map1, 16, 8, 0, 5, 15, 6, flagSprite};
 
 void setup() {
   arduboy.begin();
@@ -40,6 +40,10 @@ void drawWorld(Level level, const unsigned char tile[], int tileSize) {
 
     positionY = positionY + tileSize;
   }
+
+  Point goalPosition = level.getGoalPosition();
+  Sprites::drawOverwrite(goalPosition.x, goalPosition.y, level.getGoalImage(),
+                         0);
 }
 
 void checkCollision(Level level) {
