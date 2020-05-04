@@ -150,22 +150,31 @@ void applyGravity() {
 }
 
 void movePlayer() {
+  player.setMoving(false);
   if (arduboy.pressed(LEFT_BUTTON) && !player.isTouchingLeft()) {
     player.x = player.x - player.speedX;
+    player.setMoving(true);
+    player.setDirection(LEFT);
   } else if (arduboy.pressed(RIGHT_BUTTON) && !player.isTouchingRight()) {
     player.x = player.x + player.speedX;
+    player.setMoving(true);
+    player.setDirection(RIGHT);
   }
 
   if (arduboy.justPressed(B_BUTTON) && player.isOnFloor()) {
     player.y = player.y - player.speedY;
     player.toggleJumping();
     playerJumpDuration = millis();
+    player.setMoving(true);
   }
 
   if (arduboy.justPressed(A_BUTTON) && player.isOnFloor()) {
     gravity = -gravity;
     player.toggleFlipped();
+    player.setMoving(true);
   }
+
+  player.nextFrame();
 }
 
 void drawPlayer() {
