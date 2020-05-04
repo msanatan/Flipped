@@ -3,6 +3,8 @@
 
 #include <Arduboy2.h>
 
+enum Direction { LEFT, RIGHT };
+
 class Player {
  private:
   uint8_t size;
@@ -16,14 +18,16 @@ class Player {
   const unsigned char *image;
   bool flipped;
   int originalSpeedY;
+  bool moving;
+  Direction direction;
 
  public:
   int x;
   int y;
   int speedX;
   int speedY;
-  Player(int x, int y, int speedX, int speedY, uint8_t size,
-         float jumpDuration, const unsigned char *image);
+  Player(int x, int y, int speedX, int speedY, uint8_t size, float jumpDuration,
+         const unsigned char *image);
   uint8_t getSize();
   float getJumpDuration();
   Rect getRect();
@@ -40,7 +44,10 @@ class Player {
   bool isFlipped();
   void toggleFlipped();
   uint8_t getFrame();
-  void setFrame(uint8_t frame);
+  void nextFrame();
+  bool getMoving();
+  void setMoving(bool moving);
+  void setDirection(Direction direction);
   const unsigned char *getImage();
   void reset(Point position);
   void draw();

@@ -16,6 +16,8 @@ Player::Player(int x, int y, int speedX, int speedY, uint8_t size,
   this->touchingRight = false;
   this->touchingTop = false;
   this->frame = 0;
+  this->moving = false;
+  this->direction = RIGHT;
 }
 
 uint8_t Player::getSize() { return this->size; }
@@ -61,7 +63,48 @@ void Player::toggleFlipped() {
 
 uint8_t Player::getFrame() { return this->frame; }
 
-void Player::setFrame(uint8_t frame) { this->frame = frame; }
+void Player::nextFrame() {
+  // First check if flipped or not
+  if (this->flipped) {
+    if (this->direction == RIGHT) {
+      if (this->frame >= 11 || this->jumping || !this->moving) {
+        this->frame = 8;
+      } else {
+        this->frame++;
+      }
+    } else if (this->direction == LEFT) {
+      // We're facing the left
+      if (this->frame == 15 || this->jumping || !this->moving) {
+        this->frame = 12;
+      } else {
+        this->frame++;
+      }
+    }
+  } else {
+    // For when we're on the ground
+    // First check if we're facing the right
+    if (this->direction == RIGHT) {
+      if (this->frame >= 3 || this->jumping || !this->moving) {
+        this->frame = 0;
+      } else {
+        this->frame++;
+      }
+    } else if (this->direction == LEFT) {
+      // We're facing the left
+      if (this->frame == 7 || this->jumping || !this->moving) {
+        this->frame = 4;
+      } else {
+        this->frame++;
+      }
+    }
+  }
+}
+
+bool Player::getMoving() { return this->moving; }
+
+void Player::setMoving(bool moving) { this->moving = moving; }
+
+void Player::setDirection(Direction direction) { this->direction = direction; }
 
 const unsigned char *Player::getImage() { return this->image; }
 
