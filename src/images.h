@@ -158,4 +158,9 @@ Image playerSprite[] = {
     0x7c,
 };
 
+Image flagSprite[] = {
+    // width, height,
+    8, 8, 0x1f, 0x15, 0x1b, 0x15, 0x1b, 0x15, 0x1b, 0xff,
+};
+
 #endif  // !IMAGES_H
