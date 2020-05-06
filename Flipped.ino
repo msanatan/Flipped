@@ -46,6 +46,14 @@ void drawWorld(Level level, const unsigned char tile[], int tileSize) {
                          0);
 }
 
+bool checkWin(Player player, Level level) {
+  // Make the goal point the center of the winning tile, it's a better collision
+  Point goalPoint = level.getGoalPosition();
+  goalPoint.x = goalPoint.x + TILE_SIZE / 2;
+  goalPoint.y = goalPoint.y + TILE_SIZE / 2;
+  return arduboy.collide(goalPoint, player.getRect());
+}
+
 void checkCollision(Level level) {
   // Reset collision flags
   player.setOnFloor(false);
@@ -194,16 +202,25 @@ void loop() {
   arduboy.clear();
   arduboy.pollButtons();
 
+  auto levelComplete = checkWin(player, level1);
+
   // Check collision and gravity
   checkCollision(level1);
   applyGravity();
-  // Move player
-  movePlayer();
+
+  if (!levelComplete) {
+    // Move player
+    movePlayer();
+  }
 
   // Draw tiles
   drawWorld(level1, floorTile, TILE_SIZE);
   // Draw player
   drawPlayer();
+
+  if (levelComplete) {
+    arduboy.print("Level Complete!");
+  }
 
   // Render the state of the game scene
   arduboy.display();
